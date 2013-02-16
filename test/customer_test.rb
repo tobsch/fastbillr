@@ -23,6 +23,11 @@ describe Fastbillr::Customer do
         expected_ids = JSON.parse(fixture_file("customers.json"))["RESPONSE"]["CUSTOMERS"].map { |c| c["CUSTOMER_ID"] }
         Fastbillr::Customer.find_by_country("de").map(&:id).must_equal expected_ids
       end
+
+      it "#find_by_customer_number" do
+        expected_id = JSON.parse(fixture_file("customers.json"))["RESPONSE"]["CUSTOMERS"].first['CUSTOMER_ID']
+        Fastbillr::Customer.find_by_customer_number("2").id.must_equal expected_id
+      end
     end
 
     describe "customer" do
@@ -48,6 +53,13 @@ describe Fastbillr::Customer do
       Excon.stub({:method => :post}, {:body => fixture_file("created_customer.json"), :status => 200})
       customer = Fastbillr::Customer.create(last_name: "foo", first_name: "bar", city: "dummy", customer_type: "business", organization: "foobar")
       customer.id.must_equal JSON.parse(fixture_file("created_customer.json"))["RESPONSE"]["CUSTOMER_ID"]
+    end
+    
+    it '#update' do
+      Excon.stub({:method => :post}, {:body => fixture_file("updated_customer.json"), :status => 200})
+      customer = Fastbillr::Customer.new
+      customer.organization = 'hyper compu global mega net'
+      customer.save
     end
   end
 

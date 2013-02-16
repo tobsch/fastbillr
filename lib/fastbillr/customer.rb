@@ -11,6 +11,12 @@ module Fastbillr
     UPPERCASE_METHOD_NAMES.each do |method_name|
       property method_name.downcase, from: method_name
     end
+    
+    # updates a customer or creates a new one
+    #
+    def save
+      Fastbillr::Request.post({"SERVICE" => "customer.update", "DATA" => to_uppercase_attribute_names}.to_json)
+    end
 
     class << self
       def all
@@ -19,6 +25,11 @@ module Fastbillr
 
       def find_by_id(id)
         response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_ID" => id.to_i}}.to_json)
+        new(response["CUSTOMERS"][0])
+      end
+
+      def find_by_customer_number(number)
+        response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_NUMBER" => number}}.to_json)
         new(response["CUSTOMERS"][0])
       end
 
