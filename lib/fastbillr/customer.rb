@@ -1,17 +1,12 @@
 module Fastbillr
-  class Customer < Hashie::Trash
+  class Customer < Fastbillr::Model
 
     property :id, from: :CUSTOMER_ID
-    UPPERCASE_METHOD_NAMES = [
-      :CUSTOMER_NUMBER, :DAYS_FOR_PAYMENT, :CREATED, :PAYMENT_TYPE, :BANK_NAME, :BANK_ACCOUNT_NUMBER,
-      :BANK_CODE, :BANK_ACCOUNT_OWNER, :SHOW_PAYMENT_NOTICE, :ACCOUNT_RECEIVABLE, :CUSTOMER_TYPE,
-      :TOP, :ORGANIZATION, :POSITION, :SALUTATION, :FIRST_NAME, :LAST_NAME, :ADDRESS, :ADDRESS_2,
-      :ZIPCODE, :CITY, :COUNTRY_CODE, :PHONE, :PHONE_2, :FAX, :MOBILE, :EMAIL, :VAT_ID, :CURRENCY_CODE
-    ]
-    UPPERCASE_METHOD_NAMES.each do |method_name|
-      property method_name.downcase, from: method_name
-    end
-    
+    fastbill_properties :customer_number, :days_for_payment, :created, :payment_type, :bank_name, :bank_account_number,
+      :bank_code, :bank_account_owner, :show_payment_notice, :account_receivable, :customer_type,
+      :top, :organization, :position, :salutation, :first_name, :last_name, :address, :address_2,
+      :zipcode, :city, :country_code, :phone, :phone_2, :fax, :mobile, :email, :vat_id, :currency_code
+        
     # updates a customer or creates a new one
     #
     def save
@@ -25,11 +20,13 @@ module Fastbillr
 
       def find_by_id(id)
         response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_ID" => id.to_i}}.to_json)
+        return false if response["CUSTOMERS"].empty?
         new(response["CUSTOMERS"][0])
       end
 
       def find_by_customer_number(number)
         response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_NUMBER" => number}}.to_json)
+        return false if response["CUSTOMERS"].empty?
         new(response["CUSTOMERS"][0])
       end
 
@@ -50,13 +47,5 @@ module Fastbillr
         customer
       end
     end
-
-    def to_uppercase_attribute_names
-      self.to_hash.inject({}) do |result, (key, value)|
-        result[key.upcase] = value
-        result
-      end
-    end
-
   end
 end

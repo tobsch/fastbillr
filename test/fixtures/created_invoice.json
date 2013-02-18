@@ -1,0 +1,26 @@
+{
+  "REQUEST":{
+      "SERVICE":"invoice.create",
+      "DATA":{
+          "CUSTOMER_ID":"60547",
+          "INTROTEXT":"DasistderEinleitungssatz.",
+          "INVOICE_DATE":"2012-03-05",
+          "DELIVERY_DATE":"M\u00e4rz2012",
+          "EU_DELIVERY":"1",
+          "ITEMS":{
+              "ITEM":[{
+                  "DESCRIPTION":"Postenbezeichnung",
+                  "UNIT_PRICE":"40.00",
+                  "VAT_PERCENT":"19.00",
+                  "QUANTITY":"10",
+                  "SORT_ORDER":"10"
+              }]
+          }
+      }
+  },
+
+  "RESPONSE":{
+      "STATUS":"success",
+      "INVOICE_ID":131203
+  }
+}
