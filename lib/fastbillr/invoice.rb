@@ -5,7 +5,7 @@ module Fastbillr
   
   class InvoiceItem < Fastbillr::Model
     property :id, from: :INVOICE_ITEM_ID
-    fastbill_properties :invoice_item_id, :article_number, :description, :quantity, :unit_price, :vat_percent, :vat_value, 
+    fastbill_properties :article_number, :description, :quantity, :unit_price, :vat_percent, :vat_value, 
       :complete_net, :complete_gross, :sort_order
   end
   
@@ -19,45 +19,33 @@ module Fastbillr
       :cash_discount_percent, :cash_discount_days, :eu_delivery, :invoice_number, :paid_date, :is_canceled, :due_date, 
       :delivery_date, :sub_total, :vat_total, :total, :document_url
     
-    
-    # updates an invoice
-    #
-    def save
-      Fastbillr::Request.post({"SERVICE" => "invoice.update", "DATA" => to_uppercase_attribute_names}.to_json)
+      
+    def to_hash
+      data = super
+      items = data.delete 'ITEMS'
+      
+      data[:ITEMS] = { :ITEM => items }
+      
+      data
     end
-
+    
     class << self
-      def all
-        Fastbillr::Request.post('{"SERVICE": "invoice.get"}')["INVOICES"].collect { |invoice| new(invoice) }
-      end
-
-      def find_by_id(id)
-        response = Fastbillr::Request.post({"SERVICE" => "invoice.get", "FILTER" => {"INVOICE_ID" => id.to_i}}.to_json)
-        return false if response["INVOICES"].empty?
-        new(response["INVOICES"][0])
-      end
-
       def find_by_invoice_number(number)
-        response = Fastbillr::Request.post({"SERVICE" => "invoice.get", "FILTER" => {"INVOICE_NUMBER" => number}}.to_json)
-        return false if response["INVOICES"].empty?
-        new(response["INVOICES"][0])
+        response = request(:get, :FILTER => { :INVOICE_NUMBER => number })
+        return false if response[model_name_plural.upcase].empty?
+        new(response[model_name_plural.upcase][0])
       end
 
       def find_by_state(state)
-        response = Fastbillr::Request.post({"SERVICE" => "invoice.get", "FILTER" => {"STATE" => state}}.to_json)
-        response["INVOICES"].collect { |invoice| new(invoice) }
+        response = request(:get, :FILTER => { :STATE => state })
+        return false if response[model_name_plural.upcase].empty?
+        response[model_name_plural.upcase].collect { |invoice| new(invoice) }
       end
 
       def search(term)
-        response = Fastbillr::Request.post({"SERVICE" => "invoice.get", "FILTER" => {"TERM" => term}}.to_json)
-        response["INVOICES"].collect { |invoice| new(invoice) }
-      end
-
-      def create(params)
-        invoice = new(params)
-        response = Fastbillr::Request.post({"SERVICE" => "invoice.create", "DATA" => invoice.to_uppercase_attribute_names}.to_json)
-        invoice.id = response["INVOICE_ID"]
-        invoice
+        response = request(:get, :FILTER => { :TERM => term })
+        return false if response[model_name_plural.upcase].empty?
+        response[model_name_plural.upcase].collect { |invoice| new(invoice) }
       end
     end
   end

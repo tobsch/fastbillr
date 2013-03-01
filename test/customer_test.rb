@@ -35,6 +35,14 @@ describe Fastbillr::Customer do
         Excon.stub({:method => :post}, {:body => fixture_file("customer.json"), :status => 200})
       end
 
+      it 'should have a model name' do
+        Fastbillr::Customer.model_name.must_equal 'customer'
+      end
+
+      it 'should have a model name' do
+        Fastbillr::Customer.model_name_plural.must_equal 'customers'
+      end
+      
       it "#find_by_id" do
         expected_customer_id = JSON.parse(fixture_file("customer.json"))["RESPONSE"]["CUSTOMERS"][0]["CUSTOMER_ID"]
         Fastbillr::Customer.find_by_id(expected_customer_id).id.must_equal expected_customer_id
@@ -53,6 +61,10 @@ describe Fastbillr::Customer do
       Excon.stub({:method => :post}, {:body => fixture_file("created_customer.json"), :status => 200})
       customer = Fastbillr::Customer.create(last_name: "foo", first_name: "bar", city: "dummy", customer_type: "business", organization: "foobar")
       customer.id.must_equal JSON.parse(fixture_file("created_customer.json"))["RESPONSE"]["CUSTOMER_ID"]
+    end
+    
+    it '#create or update' do
+      flunk
     end
     
     it '#update' do
