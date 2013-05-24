@@ -11,7 +11,7 @@ module Fastbillr
     def to_hash
       super.inject({}) do |result, (key, value)|
         # TODO: we could translate this automatically...
-        key = :customer_id if key.to_sym == :id 
+        key = :customer_id if key.downcase.to_sym == :id 
         result[key.upcase] = value 
         result
       end
