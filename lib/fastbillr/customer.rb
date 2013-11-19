@@ -5,14 +5,14 @@ module Fastbillr
     fastbill_properties :customer_number, :days_for_payment, :payment_type, :bank_name, :bank_account_number,
       :bank_code, :bank_account_owner, :show_payment_notice, :account_receivable, :customer_type,
       :top, :organization, :position, :salutation, :first_name, :last_name, :address, :address_2,
-      :zipcode, :city, :country_code, :phone, :phone_2, :fax, :mobile, :email, :vat_id, :currency_code, :lastupdate, :created, 
-      :newsletter_optin
-  
+      :zipcode, :city, :country_code, :phone, :phone_2, :fax, :mobile, :email, :vat_id, :currency_code, :lastupdate, :created,
+      :newsletter_optin, :bank_bic, :bank_iban
+
     def to_hash
       super.inject({}) do |result, (key, value)|
         # TODO: we could translate this automatically...
-        key = :customer_id if key.downcase.to_sym == :id 
-        result[key.upcase] = value 
+        key = :customer_id if key.downcase.to_sym == :id
+        result[key.upcase] = value
         result
       end
     end
