@@ -6,7 +6,7 @@ module Fastbillr
       :bank_code, :bank_account_owner, :show_payment_notice, :account_receivable, :customer_type,
       :top, :organization, :position, :salutation, :first_name, :last_name, :address, :address_2,
       :zipcode, :city, :country_code, :phone, :phone_2, :fax, :mobile, :email, :vat_id, :currency_code, :lastupdate, :created,
-      :newsletter_optin, :bank_bic, :bank_iban, :secondary_address, :bank_account_mandate_reference, :contact_id
+      :newsletter_optin, :bank_bic, :bank_iban, :secondary_address, :bank_account_mandate_reference, :contact_id, :tags
 
     def to_hash
       super.inject({}) do |result, (key, value)|
@@ -19,25 +19,31 @@ module Fastbillr
 
     class << self
       def find_by_id(id)
-        response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_ID" => id.to_i}}.to_json)
-        return false if response["CUSTOMERS"].empty?
-        new(response["CUSTOMERS"][0])
+        response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_ID" => id.to_i }}.to_json)
+        return nil if response[:CUSTOMERS].empty?
+        new(response[:CUSTOMERS][0])
       end
 
       def find_by_customer_number(number)
-        response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_NUMBER" => number}}.to_json)
-        return false if response["CUSTOMERS"].empty?
-        new(response["CUSTOMERS"][0])
+        response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CUSTOMER_NUMBER" => number }}.to_json)
+        return nil if response[:CUSTOMERS].empty?
+        new(response[:CUSTOMERS][0])
       end
-
-      def find_by_country(country_code)
+      
+      def find_by_city(city)
+        response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"CITY" => city }}.to_json)
+        return nil if response[:CUSTOMERS].nil?
+        response[:CUSTOMERS].collect { |customer| new(customer) }
+      end
+      
+      def find_by_country_code(country_code)
         response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"COUNTRY_CODE" => country_code.upcase}}.to_json)
-        response["CUSTOMERS"].collect { |customer| new(customer) }
+        response[:CUSTOMERS].collect { |customer| new(customer) }
       end
 
       def search(term)
         response = Fastbillr::Request.post({"SERVICE" => "customer.get", "FILTER" => {"TERM" => term}}.to_json)
-        response["CUSTOMERS"].collect { |customer| new(customer) }
+        response[:CUSTOMERS].collect { |customer| new(customer) }
       end
     end
   end
