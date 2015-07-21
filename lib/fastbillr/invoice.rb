@@ -1,5 +1,5 @@
 module Fastbillr
-  class VatItem < Fastbillr::Model
+  class InvoiceVatItem < Fastbillr::Model
     fastbill_properties  :vat_percent, :vat_value, :complete_net
   end
   
@@ -11,16 +11,16 @@ module Fastbillr
   
   class Invoice < Fastbillr::Model
     property :items, :with => lambda { |v| v.collect { |item| InvoiceItem.new(item) } }
-    property :vat_items, :with => lambda { |v| v.collect { |item| VatItem.new(item) } }
+    property :vat_items, :with => lambda { |v| v.collect { |item| InvoiceVatItem.new(item) } }
 
     property :id, from: :INVOICE_ID
 
     fastbill_properties :type, :invoice_number, :customer_id, :customer_costcenter_id, :currency_code, :template_id, :introtext, :invoice_date, :delivery_date,
       :cash_discount_percent, :cash_discount_days, :eu_delivery, :invoice_number, :paid_date, :is_canceled, :due_date, 
-      :delivery_date, :sub_total, :vat_total, :total, :document_url, :customer_number, :project_id, :invoice_title, :organization, :note, :salutation,
+      :delivery_date, :sub_total, :vat_total, :total, :document_url, :customer_number, :project_id, 
+      :invoice_title, :organization, :note, :salutation,
       :first_name, :last_name, :address, :address_2, :zipcode, :city, :comment_ , :payment_type, :days_for_payment, :bank_name, :bank_account_number, :bank_code, :bank_account_owner, 
       :bank_iban, :bank_bic, :affiliate, :country_code, :vat_id, :currency_code, :subscription_id, :payment_info, :lastupdate
-    
       
     def to_hash
       data = super
