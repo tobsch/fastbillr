@@ -17,7 +17,7 @@ module Fastbillr
 
     fastbill_properties :type, :invoice_number, :customer_id, :customer_costcenter_id, :currency_code, :template_id, :introtext, :invoice_date, :delivery_date,
       :cash_discount_percent, :cash_discount_days, :eu_delivery, :invoice_number, :paid_date, :is_canceled, :due_date, 
-      :delivery_date, :sub_total, :vat_total, :total, :document_url
+      :delivery_date, :sub_total, :vat_total, :total, :document_url, :tags
     
       
     def to_hash
