@@ -6,7 +6,7 @@ module Fastbillr
       :bank_code, :bank_account_owner, :show_payment_notice, :account_receivable, :customer_type,
       :top, :organization, :position, :salutation, :first_name, :last_name, :address, :address_2,
       :zipcode, :city, :country_code, :phone, :phone_2, :fax, :mobile, :email, :vat_id, :currency_code, :lastupdate, :created,
-      :newsletter_optin, :bank_bic, :bank_iban, :secondary_address, :bank_account_mandate_reference, :contact_id
+      :newsletter_optin, :bank_bic, :bank_iban, :secondary_address, :bank_account_mandate_reference, :contact_id, :tags
 
     def to_hash
       super.inject({}) do |result, (key, value)|
