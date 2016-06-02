@@ -9,7 +9,7 @@ module Fastbillr
       end
 
       def base_url
-        "https://portal.fastbill.com/api/1.0/api.php"
+        "https://my.fastbill.com/api/1.0/api.php"
       end
     end
 
