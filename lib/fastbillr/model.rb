@@ -1,5 +1,6 @@
 module Fastbillr
   class Model < Hashie::Trash
+    
     def to_hash
       super.inject({}) do |result, (key, value)|
         result[key.upcase] = value
@@ -12,7 +13,9 @@ module Fastbillr
     end
     
     def save
+      
       action = new_record? ? :create : :update
+      
       response = self.class.request(action, :DATA => to_hash)
       self.id = response["#{self.class.model_name.upcase}_ID"]
       
@@ -21,12 +24,12 @@ module Fastbillr
     
     class << self
       def all
-        request(:get)[ model_name_plural.upcase ].collect { |invoice| new(invoice) }
+        request(:get)[ model_name_plural.upcase.to_sym ].collect { |invoice| new(invoice) }
       end
       
       def find_by_id(id)
         response = request(:get, :FILTER => { "#{model_name.upcase}_ID" => id.to_i })
-        return false if response[model_name_plural.upcase].empty?
+        return false if response[model_name_plural.upcase.to_sym].empty?
         new(response[model_name_plural.upcase][0])
       end
       
