@@ -27,7 +27,7 @@ module Fastbillr
     end
     
     def complete
-      response = self.class.request('complete', :DATA => { 'INVOICE_ID' = id})
+      response = self.class.request('complete', :DATA => { :INVOICE_ID => id })
     end
       
     def to_hash
