@@ -19,6 +19,16 @@ module Fastbillr
       :cash_discount_percent, :cash_discount_days, :eu_delivery, :invoice_number, :paid_date, :is_canceled, :due_date, 
       :delivery_date, :sub_total, :vat_total, :total, :document_url
     
+    def send_by_email(recipient, options = {})
+      data = options.inject({}){ |memo, (k,v)| memo[k.to_s.upcase] = v; memo }
+      data['INVOICE_ID'] = id
+      data['RECIPIENT'] = recipient
+      response = self.class.request('sendbyemail', :DATA => data)
+    end
+    
+    def complete
+      response = self.class.request('complete', :DATA => { 'INVOICE_ID' = id})
+    end
       
     def to_hash
       data = super
