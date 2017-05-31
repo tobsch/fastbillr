@@ -22,7 +22,14 @@ module Fastbillr
     def send_by_email(recipient, options = {})
       data = options.inject({}){ |memo, (k,v)| memo[k.to_s.upcase] = v; memo }
       data['INVOICE_ID'] = id
-      data['RECIPIENT'] = recipient
+      data['RECIPIENT'] = { 'TO': recipient }
+      if bcc = options.delete(:bcc)
+        data['RECIPIENT']['BCC'] = bcc
+      end
+      if cc = options.delete(:cc)
+        data['RECIPIENT']['CC'] = cc
+      end
+      
       response = self.class.request('sendbyemail', :DATA => data)
     end
     
